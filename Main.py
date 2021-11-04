@@ -5,9 +5,10 @@ from datetime import datetime
 import pygame_menu
 import shelve
 from os import system
+
 class Display:
-    w_init = 1/2
-    h_init = 8/9
+    w_init = 720
+    h_init = 800
     angle = 0
     help_scale = (0.4,0.4)
 class Utillization:
@@ -15,7 +16,7 @@ class Utillization:
     y = 1
 pygame.init()
 infoObject = pygame.display.Info()
-size = [int(infoObject.current_w*Display.w_init),int(infoObject.current_h*Display.h_init)]
+size = [Display.w_init, Display.h_init]
 screen = pygame.display.set_mode(size,pygame.RESIZABLE)
 def main() :
     def show_mode():

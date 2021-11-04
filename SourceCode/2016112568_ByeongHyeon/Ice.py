@@ -1,5 +1,3 @@
-
-from typing import get_origin
 import pygame
 import random
 import time
@@ -22,6 +20,7 @@ infoObject = pygame.display.Info()
 # 896 * 1020
 size = [infoObject.current_w,infoObject.current_h]
 screen = pygame.display.set_mode(size,pygame.RESIZABLE)
+
 
 class Move:
     # 좌방향 이동키
@@ -51,16 +50,16 @@ class Color:
     yellow = (255,255,0)
 
 class Size:
-    # 비행체의 x,y사이즈
-    a_xsize = size[0]//9
+    # 피사체의 x,y사이즈
+    a_xsize = size[0]//13
     a_ysize = size[1]//8
     # 미사일의 x,y사이즈
     m_xsize = size[0]//30
     m_ysize = size[1]//20
-    # 크기 조정(최대값, 최소값)
-    min_size = ceil((sum(size)//50)*2)
-    max_size = ceil((sum(size)//30)*2)
-    block_max_size = size[0]//5
+    # 미사일의 크기 조정(최대값, 최소값)
+    min_size = ceil((sum(size)//35))
+    max_size = ceil((sum(size)//20))
+    block_max_size = size[0]//10
     # 2등분 3등분 값을 찾기위한 num
     half_split_num = 2
     third_split_num = 3
@@ -78,11 +77,8 @@ class Size:
 
     rand_min_size = 1
 
-    x = 0
+    x = 0 
     y = 1
-
-    restart_middle = 290
-
 
 
 class Speed:
@@ -105,10 +101,8 @@ class Speed:
     m_init_speed = 2
     b_init_speed = 2
 
-    speed_end_point = 0
-    
-    
-    
+    speed_end_point = 0 
+
 
 class Util:
     # 미사일을 발사할때 미사일 객체가 저장되는 리스트 공간
@@ -124,12 +118,8 @@ class Util:
     # 현재 내가 획득한 점수
     score = 0
     # Game Over
-    GO = 0
-    # 최고점수 불러오기
-    f = open('Oasisscore.txt', 'r')
-    x = f.read()
-    highscore = int(x)
-
+    GO = 0   
+    
     score_10 = 10
     score_100 = 100
     score_200 = 200
@@ -146,9 +136,8 @@ class Util:
     missile_rate = 1
 
     obj_num = 1
-    time_sleep = 1
 
-    end_point = 0 
+    sleep_time = 1
 
 
 class FontSize:
@@ -156,7 +145,6 @@ class FontSize:
     lensize_start = 50
     size_kill_loss = sum(size) // 85
     size_gameover = sum(size) // 40
-    size_restart = 15
     lensize_gameover = 65
     len_for_time = size[0] // 6
     len_for_time_ysize = 5
@@ -164,23 +152,24 @@ class FontSize:
 
 
 class Sound:
-    m_sound = 0.1
-    crash1_sound = 0.1
-    crash2_sound = 0.1
+    m_sound = 0.2
+    crash1_sound = 0.3
+    crash2_sound = 0.2
     game_over_sound = 0.3
-    background_sound = 0.1
+    background_sound = 0.3
 
 class Resizing:
-    a_xsize = 9
+    a_xsize = 13
     a_ysize = 8
     m_xsize = 30
     m_ysize = 20
-    min_size_rel = 50
-    max_size_rel = 30
-    min_size =  2 
-    max_size =  2
 
-    block_max_size = 5
+    min_size_rel = 35
+    max_size_rel = 20
+    min_size =  1
+    max_size =  1
+
+    block_max_size = 10
 
     size_kill_loss = 85
     size_gameover = 47
@@ -188,14 +177,11 @@ class Resizing:
 
 
 
-    
-
-
 class obj:
     def __init__(self):
-        self.x =0
-        self.y=0
-        self.move =0
+        self.x = 0
+        self.y = 0
+        self.move = 0
 
     def put_img(self,address):
         # png파일 일때
@@ -274,10 +260,8 @@ def crash2(a,b):
         return False
 
 
-
 def cal_score(kill,loss):
     Util.score = (Util.kill * Util.kill_score_cal - Util.loss * Util.loss_score_cal)
-
 
 def change_size_rate(size):
     
@@ -301,7 +285,7 @@ def change_size_rate(size):
     #     ss.y = size[1] - ss.sy
     # 비행체 객체의 사이즈 변경
     try:
-        ss.put_img("SourceCode/Image/DesrtCar.png")
+        ss.put_img("SourceCode/Image/santa.png")
         ss.change_size(Size.a_xsize, Size.a_ysize)
         ss.x*=Size.x_resize_rate
         ss.y*=Size.y_resize_rate
@@ -361,19 +345,19 @@ def change_size_rate(size):
 # 객체 생성
 ss = obj()
 # 우리들이 움직여야할 물체
-ss.put_img("SourceCode/Image/DesrtCar.png")
+ss.put_img("SourceCode/Image/santa.png")
 # 그림(비행체)의 크기를 조정
 ss.change_size(Size.a_xsize,Size.a_ysize)
 # 비행체의 위치를 하단의 중앙으로 바꾸기위해!
 # x값의 절반에서 피사체의 길이의 절반만큼 왼쪽으로 이동해야 정확히 가운데임
-ss.x = round(size[Size.x]/Size.half_split_num - ss.sx/Size.half_split_num)
+ss.x = round(size[0]/Size.half_split_num - ss.sx/Size.half_split_num)
 # 맨 밑에서 피사체의 y길이만큼 위로 올라와야함
-ss.y = size[Size.y] - ss.sy
+ss.y = size[1] - ss.sy
 # 비행체가 움직이는 속도를 결정함
 ss.move = Speed.s_speed
 
 # 게임의 배경화면 설정
-background_image_desert = pygame.image.load("SourceCode/Image/DESERT.jpeg")
+background_image_desert = pygame.image.load("SourceCode/Image/Antartic.png")
 background_image_desert = pygame.transform.scale(background_image_desert,size) # 그림의 크기를 조정한다.
 
 
@@ -491,7 +475,7 @@ while not SB:
         # 미사일 객체 생성
         mm = obj()
         # 미사일의 사진
-        mm.put_img('SourceCode/Image/MISSILE_2.png')
+        mm.put_img('SourceCode/Image/ice_missile.png')
         # 미사일의 크기 조정
         # m_xsize = 5, m_ysize = 15
         mm.change_size(Size.m_xsize,Size.m_ysize)
@@ -523,7 +507,7 @@ while not SB:
         missile1.stop()
         missile2.play()
         mm2 = obj()
-        mm2.put_img('SourceCode/Image/MISSILE_2.png')
+        mm2.put_img('SourceCode/Image/ice_missile.png')
         mm2.change_size(Size.m_xsize, Size.m_ysize)
         mm2.x = round(ss.x +(ss.sx * Size.half_split_num) / Size.third_split_num - mm.sx / Size.half_split_num)
         mm2.y = ss.y - mm2.sy - Util.m_loc_10
@@ -559,10 +543,10 @@ while not SB:
 
 
     # score 가 10점 증가함에따라 피사체 발생 개수 0.01확률 증가 
-    if random.random() > Speed.create_rate_c - (Util.score//Util.score_200)/Util.score_100:
+    if random.random() > Speed.create_rate_c - (Util.score//Util.score_100)/Util.score_100:
         # 피사체 객체 생성
         aa = obj()
-        aa.put_img("SourceCode/Image/Scorphion.png")
+        aa.put_img("SourceCode/Image/penguin2-removebg-preview.png")
         # 피사체의 그림 크기 조정
         random_size = random.randint(Size.min_size,Size.max_size)
         # print("Size.min_size : {} Size.max_size : {} ss.x : {} ss.y : {} ss.sx : {} ss.sy : {} size : {} aa.sx : {} aa.sy : {}".format(Size.min_size, Size.max_size,ss.x,ss.y,ss.sx,ss.sy,size,aa.sx,aa.sy))
@@ -581,11 +565,11 @@ while not SB:
     if random.random() > Speed.create_rate_r:
         # 장애물 객체 생성
         block = obj()
-        block.put_img('SourceCode/Image/Catus.png')
+        block.put_img('SourceCode/Image/ship.png')
         random_size = random.randint(Size.min_size,Size.block_max_size)
         block.change_size(random_size, random_size)
         # block.change_size(Size.block_size, Size.block_size)
-        block.x = Util.start_loc[Size.x] - block.sx
+        block.x = Util.a_loc_10
         block.y = random.randint(Size.rand_min_size, size[Size.x] - block.sx - round(ss.sx/Size.half_split_num))
         block.move = Speed.b_init_speed + (Util.score//Util.score_100)
         Util.block_list.append(block)
@@ -626,7 +610,7 @@ while not SB:
         for j in range(len(Util.a_list)):
             m = Util.m_list[i]
             a = Util.a_list[j]
-            if crash2(m,a) is True:
+            if crash(m,a) is True:
                 dm_list.append(i)
                 da_list.append(j)
     
@@ -663,7 +647,7 @@ while not SB:
             # 부딛칠 때 효과음
             boom1.play()
             # 1초뒤에 꺼지도록 함
-            time.sleep(Util.time_sleep)
+            time.sleep(Util.sleep_time)
             # while 문이 종료되도록 하는 key
             SB = True
             # Go 가 0 인상태로 while문을 빠져나왔다면 x버튼으로 빠져나온것
@@ -676,14 +660,14 @@ while not SB:
         if crash2(b,ss) is True:
             # 부딛칠 때 효과음
             boom1.play()
-            time.sleep(Util.time_sleep)
+            time.sleep(Util.sleep_time)
             # while문 종료 키 
             SB = True
             Util.GO = True
 
 
     # score 가 0 점이 되면 프로그램 종료
-    if Util.score < Util.end_point:
+    if Util.score < 0:
         SB = True
         Util.GO = True
     
@@ -691,7 +675,7 @@ while not SB:
 
     # 4-4. 그리기 
     #  마우스에의해 창크기가 바뀜에 따라 배경화면 크기가 바뀜
-    background_image_desert = pygame.image.load("SourceCode/Image/DESERT.jpeg")
+    background_image_desert = pygame.image.load("SourceCode/Image/Antartic.png")
     background_image_desert = pygame.transform.scale(background_image_desert, size)
     screen.blit(background_image_desert, Util.start_loc)
     
@@ -705,7 +689,7 @@ while not SB:
     for a in Util.a_list:
         # print(a.sx,a.sy)
         if (a.sx > Size.err_x) or (a.sy > Size.err_y):
-            a.put_img("SourceCode/Image/Scorphion.png")
+            a.put_img("SourceCode/Image/penguin2-removebg-preview.png")
             a.change_size(Size.standard_size,Size.standard_size)
         a.show()
     # 선인장 장애물 보여주기
@@ -715,22 +699,19 @@ while not SB:
     # Util.score = (Util.kill*5 - Util.loss*8)
     # 점수산정을 메소드화 하였음
     cal_score(Util.kill, Util.loss)
+    
     font = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_kill_loss)
-    text_kill = font.render("Killed : {} Loss : {}  Score : {} HighScore : {}".format(Util.kill, Util.loss, Util.score, Util.highscore), True, Color.yellow) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
-
+    text_kill = font.render("Killed : {} Loss : {}  Score : {}".format(Util.kill, Util.loss, Util.score), True, Color.yellow) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
     screen.blit(text_kill,FontSize.loc_kill_loss) # 이미지화 한 텍스트라 이미지를 보여준다고 생각하면 됨 
     
     # 현재 흘러간 시간
     text_time = font.render("Time : {:.2f}".format(delta_time), True, Color.purple)
-    screen.blit(text_time,(size[Size.x]-FontSize.len_for_time, FontSize.len_for_time_ysize))
+    screen.blit(text_time,(size[0]-FontSize.len_for_time, FontSize.len_for_time_ysize))
     
     # 4-5. 업데이트
     pygame.display.flip() # 그려왔던게 화면에 업데이트가 됨
     Move.position = False
 
-
-def restart():
-    import Main
 
 
 # 5. 게임종료(1. x키를 눌러서 게임이 종료된 경우, 2. 죽어서 게임이 종료된 경우)
@@ -738,11 +719,8 @@ def restart():
 game_over.play()
 while Util.GO:
     clock.tick(Move.FPS)
-    for event in pygame.event.get(): # 이벤트가 있다면
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_r:
-                import Main
-                Main.main()
+
+    for event in pygame.event.get(): # 이벤트가 있다면 
         if event.type == pygame.QUIT:
             Util.GO = False
         if event.type == pygame.VIDEORESIZE:
@@ -752,25 +730,16 @@ while Util.GO:
             size =[width, height]
             window = pygame.display.set_mode(size, pygame.RESIZABLE)
             Move.position = True
-    # 최고점수 수정
-    if Util.score > Util.highscore:
-        d = open('Oasisscore.txt', 'w')
-        d.write(str(Util.score))
-        d.close()
-
+    
         
     background_image_desert = pygame.transform.scale(background_image_desert, size)
     screen.blit(background_image_desert, Util.start_loc)
 
     FontSize.size_gameover = sum(size) // Resizing.size_gameover
     font = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_gameover)
-
-    Rfont = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_restart)
     text_kill = font.render("GAME OVER", True, Color.red) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
-    text_restart = Rfont.render("Restart >> Press R", True, Color.yellow)
     # screen.blit(text_kill,(size[0] // Size.half_split_num - (size[0] // Size.half_split_num) // Size.half_split_num + FontSize.lensize_gameover, round((size[1] / Size.half_split_num) - FontSize.lensize_gameover))) # 이미지화 한 텍스트라 이미지를 보여준다고 생각하면 됨 
-    screen.blit(text_kill, (size[Size.x] * Size.three_five - FontSize.size_gameover, size[Size.x]//Size.half_split_num ))
-    screen.blit(text_restart, (Size.restart_middle, size[Size.y]//Size.half_split_num ))
+    screen.blit(text_kill, (size[Size.x] * Size.three_five - FontSize.size_gameover, size[Size.y]//Size.half_split_num ))
     pygame.display.flip() # 그려왔던게 화면에 업데이트가 됨
     Move.position = False
 

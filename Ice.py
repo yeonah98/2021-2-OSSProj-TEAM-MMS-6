@@ -9,6 +9,7 @@ from math import ceil
 # x, y => 비행기의 가로길이, 세로길이
 # 1. 게임초기화
 pygame.init()
+
 # 2. 게임창 옵션 설정
 # 2-1 고정된 화면 크기
 # size = [700,800]
@@ -79,6 +80,8 @@ class Size:
     x = 0 
     y = 1
 
+    restart_middle = 290
+
 
 class Speed:
     # 미사일의 스피드
@@ -117,15 +120,12 @@ class Util:
     loss = 0 
     # 현재 내가 획득한 점수
     score = 0
-
     # 최고점수 불러오기
     f = open('Icescore.txt', 'r')
     x = f.read()
     highscore = int(x)
-
     # Game Over
     GO = 0
-
 
     score_10 = 10
     score_100 = 100
@@ -152,6 +152,7 @@ class FontSize:
     lensize_start = 50
     size_kill_loss = sum(size) // 85
     size_gameover = sum(size) // 40
+    size_restart = 15
     lensize_gameover = 65
     len_for_time = size[0] // 6
     len_for_time_ysize = 5
@@ -708,7 +709,9 @@ while not SB:
     cal_score(Util.kill, Util.loss)
     
     font = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_kill_loss)
+
     text_kill = font.render("Killed : {} Loss : {}  Score : {} HighScore : {}".format(Util.kill, Util.loss, Util.score, Util.highscore), True, Color.yellow) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
+
     screen.blit(text_kill,FontSize.loc_kill_loss) # 이미지화 한 텍스트라 이미지를 보여준다고 생각하면 됨 
     
     # 현재 흘러간 시간
@@ -719,6 +722,9 @@ while not SB:
     pygame.display.flip() # 그려왔던게 화면에 업데이트가 됨
     Move.position = False
 
+
+def restart():
+    import Main
 
 
 # 5. 게임종료(1. x키를 눌러서 게임이 종료된 경우, 2. 죽어서 게임이 종료된 경우)
@@ -740,27 +746,26 @@ while Util.GO:
             size =[width, height]
             window = pygame.display.set_mode(size, pygame.RESIZABLE)
             Move.position = True
-
     # 최고기록 수정
     if Util.score > Util.highscore:
         d = open('Icescore.txt', 'w')
         d.write(str(Util.score))
         d.close()
 
+
     background_image_desert = pygame.transform.scale(background_image_desert, size)
     screen.blit(background_image_desert, Util.start_loc)
 
     FontSize.size_gameover = sum(size) // Resizing.size_gameover
     font = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_gameover)
+    Rfont = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_restart)
     text_kill = font.render("GAME OVER", True, Color.red) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
+    text_restart = Rfont.render("Restart >> Press R", True, Color.yellow)
     # screen.blit(text_kill,(size[0] // Size.half_split_num - (size[0] // Size.half_split_num) // Size.half_split_num + FontSize.lensize_gameover, round((size[1] / Size.half_split_num) - FontSize.lensize_gameover))) # 이미지화 한 텍스트라 이미지를 보여준다고 생각하면 됨 
-    screen.blit(text_kill, (size[Size.x] * Size.three_five - FontSize.size_gameover, size[Size.y]//Size.half_split_num ))
+    screen.blit(text_kill, (size[Size.x] * Size.three_five - FontSize.size_gameover, size[Size.x]//Size.half_split_num ))
+    screen.blit(text_restart, (Size.restart_middle, size[Size.y]//Size.half_split_num ))
     pygame.display.flip() # 그려왔던게 화면에 업데이트가 됨
     Move.position = False
-
-
-
-
 
 pygame.quit()
 
@@ -775,6 +780,7 @@ pygame.quit()
 
 
 # 위 코드 세줄이 한 묶음으로 다니게 될것임
+
 
 
 

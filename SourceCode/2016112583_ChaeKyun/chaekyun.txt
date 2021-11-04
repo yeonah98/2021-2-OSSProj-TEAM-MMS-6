@@ -1,0 +1,7 @@
+chaekyun lim
+
+
+#git add chaekyun.txt
+#git commit -m "add txt file"
+#git push
+

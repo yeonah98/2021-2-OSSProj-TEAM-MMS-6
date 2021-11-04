@@ -1,5 +1,3 @@
-
-from typing import get_origin
 import pygame
 import random
 import time
@@ -22,6 +20,7 @@ infoObject = pygame.display.Info()
 # 896 * 1020
 size = [infoObject.current_w,infoObject.current_h]
 screen = pygame.display.set_mode(size,pygame.RESIZABLE)
+
 
 class Move:
     # 좌방향 이동키
@@ -81,8 +80,6 @@ class Size:
     x = 0
     y = 1
 
-    restart_middle = 290
-
 
 
 class Speed:
@@ -124,12 +121,8 @@ class Util:
     # 현재 내가 획득한 점수
     score = 0
     # Game Over
-    GO = 0
-    # 최고점수 불러오기
-    f = open('Oasisscore.txt', 'r')
-    x = f.read()
-    highscore = int(x)
-
+    GO = 0   
+    
     score_10 = 10
     score_100 = 100
     score_200 = 200
@@ -156,7 +149,6 @@ class FontSize:
     lensize_start = 50
     size_kill_loss = sum(size) // 85
     size_gameover = sum(size) // 40
-    size_restart = 15
     lensize_gameover = 65
     len_for_time = size[0] // 6
     len_for_time_ysize = 5
@@ -164,11 +156,11 @@ class FontSize:
 
 
 class Sound:
-    m_sound = 0.1
-    crash1_sound = 0.1
-    crash2_sound = 0.1
+    m_sound = 0.2
+    crash1_sound = 0.3
+    crash2_sound = 0.2
     game_over_sound = 0.3
-    background_sound = 0.1
+    background_sound = 0.3
 
 class Resizing:
     a_xsize = 9
@@ -274,10 +266,8 @@ def crash2(a,b):
         return False
 
 
-
 def cal_score(kill,loss):
     Util.score = (Util.kill * Util.kill_score_cal - Util.loss * Util.loss_score_cal)
-
 
 def change_size_rate(size):
     
@@ -715,9 +705,9 @@ while not SB:
     # Util.score = (Util.kill*5 - Util.loss*8)
     # 점수산정을 메소드화 하였음
     cal_score(Util.kill, Util.loss)
+    
     font = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_kill_loss)
-    text_kill = font.render("Killed : {} Loss : {}  Score : {} HighScore : {}".format(Util.kill, Util.loss, Util.score, Util.highscore), True, Color.yellow) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
-
+    text_kill = font.render("Killed : {} Loss : {}  Score : {}".format(Util.kill, Util.loss, Util.score), True, Color.yellow) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
     screen.blit(text_kill,FontSize.loc_kill_loss) # 이미지화 한 텍스트라 이미지를 보여준다고 생각하면 됨 
     
     # 현재 흘러간 시간
@@ -729,20 +719,14 @@ while not SB:
     Move.position = False
 
 
-def restart():
-    import Main
-
 
 # 5. 게임종료(1. x키를 눌러서 게임이 종료된 경우, 2. 죽어서 게임이 종료된 경우)
 # 이건 게임오버가 된 상황!
 game_over.play()
 while Util.GO:
     clock.tick(Move.FPS)
-    for event in pygame.event.get(): # 이벤트가 있다면
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_r:
-                import Main
-                Main.main()
+
+    for event in pygame.event.get(): # 이벤트가 있다면 
         if event.type == pygame.QUIT:
             Util.GO = False
         if event.type == pygame.VIDEORESIZE:
@@ -752,11 +736,6 @@ while Util.GO:
             size =[width, height]
             window = pygame.display.set_mode(size, pygame.RESIZABLE)
             Move.position = True
-    # 최고점수 수정
-    if Util.score > Util.highscore:
-        d = open('Oasisscore.txt', 'w')
-        d.write(str(Util.score))
-        d.close()
 
         
     background_image_desert = pygame.transform.scale(background_image_desert, size)
@@ -764,13 +743,9 @@ while Util.GO:
 
     FontSize.size_gameover = sum(size) // Resizing.size_gameover
     font = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_gameover)
-
-    Rfont = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_restart)
     text_kill = font.render("GAME OVER", True, Color.red) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
-    text_restart = Rfont.render("Restart >> Press R", True, Color.yellow)
     # screen.blit(text_kill,(size[0] // Size.half_split_num - (size[0] // Size.half_split_num) // Size.half_split_num + FontSize.lensize_gameover, round((size[1] / Size.half_split_num) - FontSize.lensize_gameover))) # 이미지화 한 텍스트라 이미지를 보여준다고 생각하면 됨 
-    screen.blit(text_kill, (size[Size.x] * Size.three_five - FontSize.size_gameover, size[Size.x]//Size.half_split_num ))
-    screen.blit(text_restart, (Size.restart_middle, size[Size.y]//Size.half_split_num ))
+    screen.blit(text_kill, (size[Size.x] * Size.three_five - FontSize.size_gameover, size[Size.y]//Size.half_split_num ))
     pygame.display.flip() # 그려왔던게 화면에 업데이트가 됨
     Move.position = False
 
