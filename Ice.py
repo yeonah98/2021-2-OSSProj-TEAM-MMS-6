@@ -1,5 +1,6 @@
 import pygame
 import random
+import shelve
 import time
 from datetime import datetime
 from pygame.constants import VIDEORESIZE
@@ -10,7 +11,6 @@ from math import ceil
 pygame.init()
 
 # 2. 게임창 옵션 설정
-
 # 2-1 고정된 화면 크기
 # size = [700,800]
 # screen = pygame.display.set_mode(size)
@@ -107,6 +107,7 @@ class Speed:
 
 
 class Util:
+    # 최고기록
     # 미사일을 발사할때 미사일 객체가 저장되는 리스트 공간
     m_list = []
     # 피사체 출현시 피사체 객체가 저장되는 리스트 공산
@@ -119,9 +120,13 @@ class Util:
     loss = 0 
     # 현재 내가 획득한 점수
     score = 0
+    # 최고점수 불러오기
+    f = open('Icescore.txt', 'r')
+    x = f.read()
+    highscore = int(x)
     # Game Over
-    GO = 0   
-    
+    GO = 0
+
     score_10 = 10
     score_100 = 100
     score_200 = 200
@@ -233,7 +238,6 @@ game_over = pygame.mixer.Sound("SourceCode/Sound/gameover.wav")
 game_over.set_volume(Sound.game_over_sound)
 
 
-
 # 충돌이 일어났는지 확인하는 함수!
 # return 값이 boolean 타입임
 # 직사각형 형태로 충돌이 일어났음을 판단하는 함수
@@ -265,6 +269,7 @@ def crash2(a,b):
 
 def cal_score(kill,loss):
     Util.score = (Util.kill * Util.kill_score_cal - Util.loss * Util.loss_score_cal)
+
 
 def change_size_rate(size):
     
@@ -704,7 +709,9 @@ while not SB:
     cal_score(Util.kill, Util.loss)
     
     font = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_kill_loss)
-    text_kill = font.render("Killed : {} Loss : {}  Score : {}".format(Util.kill, Util.loss, Util.score), True, Color.yellow) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
+
+    text_kill = font.render("Killed : {} Loss : {}  Score : {} HighScore : {}".format(Util.kill, Util.loss, Util.score, Util.highscore), True, Color.yellow) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
+
     screen.blit(text_kill,FontSize.loc_kill_loss) # 이미지화 한 텍스트라 이미지를 보여준다고 생각하면 됨 
     
     # 현재 흘러간 시간
@@ -715,16 +722,21 @@ while not SB:
     pygame.display.flip() # 그려왔던게 화면에 업데이트가 됨
     Move.position = False
 
+
 def restart():
     import Main
+
 
 # 5. 게임종료(1. x키를 눌러서 게임이 종료된 경우, 2. 죽어서 게임이 종료된 경우)
 # 이건 게임오버가 된 상황!
 game_over.play()
 while Util.GO:
-    clock.tick(Move.FPS)
 
-    for event in pygame.event.get(): # 이벤트가 있다면 
+    for event in pygame.event.get(): # 이벤트가 있다면
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                import Main
+                Main.main()
         if event.type == pygame.QUIT:
             Util.GO = False
         if event.type == pygame.VIDEORESIZE:
@@ -734,11 +746,13 @@ while Util.GO:
             size =[width, height]
             window = pygame.display.set_mode(size, pygame.RESIZABLE)
             Move.position = True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_r:
-                restart()
-    
-        
+    # 최고기록 수정
+    if Util.score > Util.highscore:
+        d = open('Icescore.txt', 'w')
+        d.write(str(Util.score))
+        d.close()
+
+
     background_image_desert = pygame.transform.scale(background_image_desert, size)
     screen.blit(background_image_desert, Util.start_loc)
 
@@ -766,8 +780,6 @@ pygame.quit()
 
 
 # 위 코드 세줄이 한 묶음으로 다니게 될것임
-
-
 
 
 
