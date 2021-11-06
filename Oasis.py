@@ -1,3 +1,4 @@
+
 from typing import get_origin
 import pygame
 import random
@@ -83,6 +84,7 @@ class Size:
     restart_middle = 290
 
 
+
 class Speed:
     # 미사일의 스피드
     m_speed = 0 # 초기화`
@@ -122,8 +124,12 @@ class Util:
     # 현재 내가 획득한 점수
     score = 0
     # Game Over
-    GO = 0   
-    
+    GO = 0
+    # 최고점수 불러오기
+    f = open('Oasisscore.txt', 'r')
+    x = f.read()
+    highscore = int(x)
+
     score_10 = 10
     score_100 = 100
     score_200 = 200
@@ -268,8 +274,10 @@ def crash2(a,b):
         return False
 
 
-def cal_score(kill):
-    Util.score = (Util.kill * Util.kill_score_cal)
+
+def cal_score(kill,loss):
+    Util.score = (Util.kill * Util.kill_score_cal - Util.loss * Util.loss_score_cal)
+
 
 def change_size_rate(size):
     
@@ -706,10 +714,10 @@ while not SB:
     # 점수 산정
     # Util.score = (Util.kill*5 - Util.loss*8)
     # 점수산정을 메소드화 하였음
-    cal_score(Util.kill)
-    
+    cal_score(Util.kill, Util.loss)
     font = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_kill_loss)
-    text_kill = font.render("Killed : {} Loss : {}  Score : {}".format(Util.kill, Util.loss, Util.score), True, Color.yellow) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
+    text_kill = font.render("Killed : {} Loss : {}  Score : {} HighScore : {}".format(Util.kill, Util.loss, Util.score, Util.highscore), True, Color.yellow) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
+
     screen.blit(text_kill,FontSize.loc_kill_loss) # 이미지화 한 텍스트라 이미지를 보여준다고 생각하면 됨 
     
     # 현재 흘러간 시간
@@ -720,42 +728,21 @@ while not SB:
     pygame.display.flip() # 그려왔던게 화면에 업데이트가 됨
     Move.position = False
 
+
 def restart():
     import Main
-    # global SB, size
-    # pygame.init()
-    # pygame.display.quit()
-    # pygame.quit()
-    # start_time = datetime.now()
-    # Util.GO = False
-    # # x값의 절반에서 피사체의 길이의 절반만큼 왼쪽으로 이동해야 정확히 가운데임
-    # ss.x = round(size[Size.x]/Size.half_split_num - ss.sx/Size.half_split_num)
-    # # 맨 밑에서 피사체의 y길이만큼 위로 올라와야함
-    # ss.y = size[Size.y] - ss.sy
-    # m_speed = Speed.m_initiate_speed_30
-    # 미사일을 발사할때 미사일 객체가 저장되는 리스트 공간
-    # m_list = []
-    # # 피사체 출현시 피사체 객체가 저장되는 리스트 공산
-    # a_list = []
-    # # 장애물 객체가 저장되는 리스트 
-    # block_list=[]
-    # # 피사체를 미사일로 맞추었을때 맞춘 피사체의 개수
-    # kill = 0 
-    # # 피사체를 죽이지못하고 화면밖으로 놓친 피사체의 개수
-    # loss = 0 
-    # # 현재 내가 획득한 점수
-    # score = 0
-    # # Game Over
-    # GO = False 
-    
+
 
 # 5. 게임종료(1. x키를 눌러서 게임이 종료된 경우, 2. 죽어서 게임이 종료된 경우)
 # 이건 게임오버가 된 상황!
 game_over.play()
 while Util.GO:
     clock.tick(Move.FPS)
-
-    for event in pygame.event.get(): # 이벤트가 있다면 
+    for event in pygame.event.get(): # 이벤트가 있다면
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                import Main
+                Main.main()
         if event.type == pygame.QUIT:
             Util.GO = False
         if event.type == pygame.VIDEORESIZE:
@@ -765,9 +752,11 @@ while Util.GO:
             size =[width, height]
             window = pygame.display.set_mode(size, pygame.RESIZABLE)
             Move.position = True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_r:
-                restart()
+    # 최고점수 수정
+    if Util.score > Util.highscore:
+        d = open('Oasisscore.txt', 'w')
+        d.write(str(Util.score))
+        d.close()
 
         
     background_image_desert = pygame.transform.scale(background_image_desert, size)
@@ -775,6 +764,7 @@ while Util.GO:
 
     FontSize.size_gameover = sum(size) // Resizing.size_gameover
     font = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_gameover)
+
     Rfont = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_restart)
     text_kill = font.render("GAME OVER", True, Color.red) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
     text_restart = Rfont.render("Restart >> Press R", True, Color.yellow)
