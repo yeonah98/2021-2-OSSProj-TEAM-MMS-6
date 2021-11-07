@@ -89,6 +89,7 @@ class Speed:
     # 미사일의 스피드
     m_speed = 0 # 초기화`
     m_initiate_speed_30 = 30
+    m_initiate_speed_25 = 25
     m_initiate_speed_15 = 15
     # 미사일의 max 스피드
     m_max_speed = 6
@@ -512,7 +513,7 @@ while not SB:
         
         
         # 미사일의 움직이는 속도를 결정함
-        mm.move = Speed.m_initiate_speed_15
+        mm.move = Speed.m_initiate_speed_25
         # 미사일의 객체를 리스트에 저장한다.
         Util.m_list.append(mm)
 
