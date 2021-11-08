@@ -275,8 +275,8 @@ def crash2(a,b):
 
 
 
-def cal_score(kill,loss):
-    Util.score = (Util.kill * Util.kill_score_cal - Util.loss * Util.loss_score_cal)
+def cal_score(kill):
+    Util.score = (Util.kill * Util.kill_score_cal)
 
 
 def change_size_rate(size):
@@ -714,7 +714,7 @@ while not SB:
     # 점수 산정
     # Util.score = (Util.kill*5 - Util.loss*8)
     # 점수산정을 메소드화 하였음
-    cal_score(Util.kill, Util.loss)
+    cal_score(Util.kill)
     font = pygame.font.Font("SourceCode/Font/DXHanlgrumStd-Regular.otf", FontSize.size_kill_loss)
     text_kill = font.render("Killed : {} Loss : {}  Score : {} HighScore : {}".format(Util.kill, Util.loss, Util.score, Util.highscore), True, Color.yellow) # 폰트가지고 랜더링 하는데 표시할 내용, True는 글자가 잘 안깨지게 하는 거임 걍 켜두기, 글자의 색깔
 
