@@ -40,6 +40,8 @@ class Move:
     position = False
     # 객체들이 화면 밖으로 나갔는지 판정에 필요한 boundary 값
     boundary = 0
+    left_boundary = 100
+    right_boundary = 550
 
 class Color:
     # RGB 검정
@@ -449,16 +451,16 @@ while not SB:
         ss.x -= ss.move
         # 물체가 왼쪽 끝 경계값으로 이동하면 더이상 나가지 않게끔 만듬!
         # 배경이 뭐냐에 따라 달라질 듯 !
-        if ss.x < Move.boundary:
+        if ss.x < Move.left_boundary:
             # 더 이상 나가지 못하도록 0 으로 막아줌
-            ss.x = Move.boundary 
+            ss.x = Move.left_boundary 
     # 오른쪽 방향키를 눌렀을 때
     elif Move.right_go == True:
         ss.x += ss.move
         # 오른쪽 끝에서 비행선의 가로크기만큼 빼줘야한다
-        if ss.x >= size[Size.x] - ss.sx:
+        if ss.x >= Move.right_boundary:
             # 더 이상 오른쪽 바깥으로 못나가게 오른쪽 끝값으로 초기화
-            ss.x = size[Size.x] - ss.sx
+            ss.x = Move.right_boundary
     # 윗 방향키를 눌렀을때
     # 윗 방향키를 elif에서 if로 시작
     # 좌우와 상하가 독립된 상태로 구분됨
