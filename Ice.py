@@ -367,6 +367,7 @@ ss.move = Speed.s_speed
 
 # 게임의 배경화면 설정
 background_image_desert = pygame.image.load("SourceCode/Image/Antartic.png")
+
 background_image_desert = pygame.transform.scale(background_image_desert,size) # 그림의 크기를 조정한다.
 
 
@@ -382,6 +383,7 @@ while not SB:
     # 4-1. FPS 설정 
     # FPS를 60으로 설정함
     clock.tick(Move.FPS)
+
 
     # 4-2. 각종 입력 감지 
     for event in pygame.event.get():  # 어떤 동작을 했을때 그 동작을 받아옴
@@ -475,7 +477,6 @@ while not SB:
         m_speed = Speed.m_initiate_speed_30 - (Util.score // Util.score_10)
     else:
         m_speed = Speed.m_max_speed
-
 
 
     # 점수와 관련해서 미사일의 속도를 바꾸면 좋을듯 !
@@ -684,10 +685,15 @@ while not SB:
 
     # 4-4. 그리기 
     #  마우스에의해 창크기가 바뀜에 따라 배경화면 크기가 바뀜
-    background_image_desert = pygame.image.load("SourceCode/Image/Antartic.png")
-    background_image_desert = pygame.transform.scale(background_image_desert, size)
-    screen.blit(background_image_desert, Util.start_loc)
-    
+    if (Util.score< 50) :
+        background_image_desert = pygame.image.load("SourceCode/Image/Antartic.png")
+        background_image_desert = pygame.transform.scale(background_image_desert, size)
+        screen.blit(background_image_desert, Util.start_loc)
+
+    else :
+        background_image_desert = pygame.image.load("SourceCode/Image/Antartic2.jpg")
+        background_image_desert = pygame.transform.scale(background_image_desert, size)
+        screen.blit(background_image_desert, Util.start_loc)
 
     # 비행체 보여주기
     ss.show()
