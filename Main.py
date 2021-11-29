@@ -5,6 +5,7 @@ from datetime import datetime
 import pygame_menu
 import shelve
 from os import system
+import sys
 
 class Display:
     w_init = 720
@@ -38,7 +39,7 @@ def main() :
     def show_help():
         menu.clear()
         menu.add.button('Back', back)
-        menu.add.image(image_path='SourceCode/Image/howtoplay.png', angle=Display.angle, scale=Display.help_scale)
+        menu.add.image(image_path='SourceCode/Image/howtoplay_r.png', angle=Display.angle, scale=Display.help_scale)
 
     menu_image = pygame_menu.baseimage.BaseImage(image_path='SourceCode/Image/StartImage.png',
                                                  drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL)
@@ -61,3 +62,4 @@ def main() :
 main()
 
 pygame.quit()
+sys.exit
